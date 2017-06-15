@@ -1,0 +1,33 @@
+Redux = reducer + flux
+
+唯一数据源，应用只有一个Store
+保持状态只读，与flux一样
+数据改变只能通过纯函数完成，纯函数就是Reducer，根据当前state和接受到action返回一个新的state，只负责计算新的state，并不存储state
+
+action，redux仅仅返回一个action对象，flux是构造了一个action且dispatch这个action
+
+dispatch，redux只有一个store，所以成了一个函数store.dispatch，没有了dispatcher.js；而flux需要dispatch到不同的store上
+
+reducer，redux处理action逻辑，根据当前state和接受到action返回一个新的state，类似flux的dispatcher.register中的处理action逻辑
+
+store.getState
+
+store.subscribe
+
+store.unsubscribe
+
+React组件完成两个功能
+1. 读取Store的state，用于初始化组件state，同时监听store的state变化，当store的state改变时候，更新组件的state
+2. 当需要store的state，需要发出action对象
+
+拆分组件
+1. container 容器组件 聪明组件
+负责和store交互
+2. render 展示组件 傻瓜组件
+只负责渲染
+
+Context
+问题：组件需要引入Store，但是Store的文件位置不确定，如果放到顶层组件中，通过props传递子组件很难维护。
+希望通过context，单独定义一个组件Provider
+
+

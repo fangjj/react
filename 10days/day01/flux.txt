@@ -1,0 +1,27 @@
+Flux
+cnpm install flux --save
+
+Action： 驱动dispatcher
+Dispatcher：处理动作分发，维持store之间的依赖关系，每个应用只有一个
+Store：存储数据和处理数据的相关逻辑，提供获取数据的方法，可以由另一个Store计算而来，每个应用有多个
+View：视图部分，复杂显示用户界面
+
+
+dispatcher相当于MVC的Controller
+store相当于MVC的Model
+view相当于MVC的View
+action相当于MVC的用户请求
+
+
+应用的状态放在Store中，React组件只扮演了渲染作用，依然有自己的state，但只是Store的一个映射，而不是直接变化state
+View中的Action会dispatch到所有Store对象，引发Store的state改变，而不是直接引发组件的state改变，从而改变View的state
+
+优点
+数据单向流动
+
+缺点
+Store之间依赖关系
+难以进行服务端渲染
+Store封装了数据存储和逻辑处理，如果需要动态替换一个Store的逻辑时，无法保持此时Store中的存储状态
+    根据用户属性动态加载不同的模块，还希望页面不重新加载，热加载等
+
