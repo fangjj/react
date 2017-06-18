@@ -1,0 +1,92 @@
+代码文件的组织方式、组织结构；
+    1. MVC(controller，model，view)
+    （reducer，actions，components/containers）
+    reducers/
+        todoReducer.js
+        filterReducer.js
+    actions/
+        todosActions.js
+        filterActions.js
+    components/(傻瓜组件)
+        todoList.js
+        todoItem.js
+        filter.js
+    containers/(容器组件)
+        todoListContainer.js
+        todoItemContainer.js
+        filterContainer.js
+
+    2. 功能组织
+        也就是把完成功能的代码放在一个目录下，一个功能包含多个角色的代码;所有需要修改的代码文件都在能这个目录下找到。
+        todoList/
+            actions.js
+            actionType.js
+            index.js
+            reducer.js
+            views/
+                component.js
+                container.js
+            filter/
+                actions.js
+                actionType.js
+                index.js
+                reducer.js
+                views/
+                    component.js
+                    container.js
+
+Store状态树的设计；
+    Store决定了要写哪些reducer和action是程序逻辑的源头；
+    一个模块控制一个状态节点；
+        模块A的reducer负责修改状态树A字段下的数据,其他的模块只能读,不能修改；
+    避免冗余数据；
+        如果在Store上存储冗余数据，那么维持不同部分数据一致就是一个大问题。（reselector工具）
+    树形结构扁平。
+        避免一个树形结构有很深的层次，且如果访问很深层次的节点，为了防止运行时出错，要保证该节点的父节点是否存在；
+
+
+确定模块的边界；
+    在最理想的情况下，我们应该通过增加代码就能增加系统的功能，而不是通过对现有代码的修改来增加功能。
+    让外界不要太依赖与自己内部的结构，这样不会因为内部的变化而影响外部模块的功能开发辅助工具；
+
+    采用export 不是用export default方式，整个应用采用一种export方式
+
+
+实践demo
+    待办事项列表
+    新增待办事项
+    待办事项过滤
+
+    1. 确定模块边界（模块目录结构）
+    todo/
+        index.js
+    filter/
+        index.js
+    2. 确定todo状态
+    {
+        todo: [
+            {
+                id: 0,
+                text: 'text',
+                completed: false,
+            }
+        ],
+        filter: 'all'
+    }
+    3. action设计
+        每个组件也要避免命名冲突。所以，最好是 每个组件的action类型字符串值都有一个唯一的前缀。action类型字符串值都有共同前缀"TODO/"
+    4. reducer
+        各自reducer
+        组合reducer
+
+其他:
+React的ref功能
+受控表单
+以及动态数量的子空间必须要包含key属性。
+
+注意：
+    组件中state和reducer中的state是不一样的
+
+
+
+
