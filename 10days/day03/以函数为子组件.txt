@@ -1,0 +1,13 @@
+“以函数为子组件”的模式就是为了克服高阶组件的这种局限而生的。
+要求必须有子组件的存在，而且这个子组件必须是一个函数。在组件实例的生命周期函数中，this.props.children引用的就是子组件，render函数会直接把this.props.children当做函数来调用，得到的结果就可以作为render返回结果的一部分。
+
+const loggedinUser = 'mockuser';
+class AddUserProp extends React.Component {
+  render() {
+    const user = loggedinUser;
+    return this.props.children(user);
+  }
+}
+AddUserProp.propTypes = {
+  children: React.PropTypes.func.isRequired
+}

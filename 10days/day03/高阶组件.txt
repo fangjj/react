@@ -1,0 +1,146 @@
+重复是优秀系统设计的大敌。
+多个组件都需要某个功能，而且这个功能和界面并没有关系，所以也不能简单地抽取成一个新的组件，但是如果让同样的逻辑在各个组件里各自实现，无疑会导致重复代码。
+    高阶组件的概念及应用；（Higher Order Component，HOC）
+        用于增强现有组件（组件类非实例）的功能，一个高阶组件就是一个函数，这个函数接受一个组件作为输入，然后返回一个新的组件作为结果，而且，返回的新组件拥有了输入组件所不具有的功能。
+        意义：
+            多个React公用同样的一个逻辑，提取公共逻辑，利用高阶组件封装成一个组件。
+            修改现有的组件（第三方或者其他开发者）的行为，可以产生新的组件，对原有组件没有任何侵害。
+    高阶组件的显示名；
+        方便调试（React，Redux，Perf）
+        const getDisplayName = (WrappedComponent) => {
+          return WrappedComponent.displayName ||
+            WrappedComponent.name ||
+            'Component';
+        }
+        HOCComponent.displayName=`Connect(${getDisplayName(WrappedComponent)})`;
+
+    代理方式的高阶组件；
+        返回的新组件类直接继承自React.Component类。新组件扮演的角色是传入参数组件的一个“代理”，在新组建的render函数中，把传入参数组件渲染出来，除了高阶组件自己要做的工作，其余功能全都转手给了传入参数组件。
+        操纵prop；(增删)
+            const addNewProps = (WrappedComponent, newProps) => {
+              return class WrappingComponent extends React.Component {
+                render() {
+                  return <WrappedComponent {...this.props} {...new Props} />
+                }
+              }
+            }
+            const removeUserProp = (WrappedComponent) => {
+              return class WrappingComponent extends React.Component {
+                render() {
+                  const {user, ...otherProps} = this.props;
+                  return <WrappedComponent {...otherProps} />
+                }
+              }
+            }
+
+        访问ref；
+            const refsHOC = (WrappedComponent) => {
+              return class HOCComponent extends React.Component {
+                constructor() {
+                  super(...arguments);
+                  this.link Ref = this.link Ref.bind(this);
+                }
+                linkRef(wrappedInstance) {
+                  this._root = wrappedInstance;
+                }
+                render() {
+                  const props = {...this.props, ref: this.linkRef};
+                  return <Wrapped Component {...props}/>;
+                }
+              };
+            };
+        抽取状态；
+            react-redux中的connect() 调用后是一个高阶组件，接受一个组件为参数connect()(Com)，返回一个容器的组件
+            const connect = (mapStateToProps={}, mapDispatchToProps={}) => {
+              return (WrappedComponent) => {
+                class HOCComponent extends React.Component {
+                   //在这里定义HOCComponent的生命周期函数
+                   constructor() {
+                     super(...arguments);
+                     this.onChange = this.onChange.bind(this);
+                   }
+
+                   componentDidMount() {
+                     this.context.store.subscribe(this.onChange);
+                   }
+
+                   component Will Unmount() {
+                     this.context.store.unsubscribe(this.onChange);
+                   }
+
+                   onChange() {
+                     this.set State({});
+                   }
+
+                   render() {
+                     const store = this.context.store;
+                     const newProps = {
+                       ...this.props,
+                       ...mapStateToProps(store.getState(), this.props),
+                       ...mapDispatchToProps(store.dispatch, this.props)
+                     }
+                     return <Wrapped Component {...newProps} />;
+
+                };
+                HOCComponent.contextTypes = {
+                  store: React.PropTypes.object
+                }
+                return HOCComponent;
+              };
+            }
+        包装组件；
+        其实render函数的JSX中完全可以引入其他的元素，甚至可以组合多个React组件，添加Style等，这样就会得到更加丰富多彩的行为。
+        const styleHOC = (WrappedComponent, style) => {
+          return class HOCComponent extends React.Component {
+            render() {
+              return (
+                <div style={style}>
+                  <WrappedComponent {...this.props}/>
+                </div>
+              );
+            }
+          };
+        };
+
+    继承方式的高阶组件；
+        继承方式的高阶组件采用继承关系关联作为参数的组件和返回的组件，假如传入的组件参数是WrappedComponent，那么返回的组件就直接继承自WrappedComponent。
+        代理方式和继承方式最大的区别，是使用渲染被包裹组件的方式。
+        return super.render();
+        return <WrappedComponent {...otherProps} />
+        需要注意，在代理方式下WrappedComponent经历了一个完整的生命周期，但在继承方式下super.render只是一个生命周期中的一个函数而已；
+        在代理方式下产生的新组件和参数组件是两个不同的组件，一次渲染，两个组件都要经历各自的生命周期，在继承方式下两者合二为一，只有一个生命周期。
+        注意：优先考虑代理，然后才考虑继承，我们应该尽量使用代理方式来构建高阶组件。
+
+        操纵prop；
+            const removeUserProp = (WrappedComponent) => {
+              return classNewComponent extends WrappedComponent {
+                render() {
+                  const {user, ...otherProps} = this.props;
+                  this.props = otherProps;
+                  return super.render();
+                }
+              };
+            }
+        操纵生命周期函数;
+            因为继承方式的高阶函数返回的新组件继承了参数组件，所以可以重新定义任何一个React组件的生命周期函数。
+            const onlyForLoggedinHOC = (WrappedComponent) => {
+              return classNewComponent extends WrappedComponent {
+                render() {
+                  if (this.props.loggedIn) {
+                    return super.render();
+                  } else {
+                    return null;
+                  }
+                }
+              }
+            }
+
+            const cacheHOC = (WrappedComponent) => {
+              return class NewComponent extends WrappedComponent {
+                shouldComponentUpdate(nextProps, nextState) {
+                  return !nextProps.useCache;
+                }
+              }
+            }
+
+    以函数为子组件的模式；

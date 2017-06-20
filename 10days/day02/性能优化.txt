@@ -1,0 +1,97 @@
+性能优化：
+“我们应该忘记忽略很小的性能优化，可以说97%的情况下，过早的优化是万恶之源，而我们应该关心对性能影响最关键的那另外3%的代码。”
+
+1. 单个React
+    发现浪费的渲染时间（Perf）如果有组件计算Virtual DOM之后发现和之前的 Virtual DOM相同，那就认为是一次浪费
+    React-Redux的should Component Update实现，简单说来就是浅层比较，用JavaScript的===操作符来进行比较，如果prop
+    的类型是字符串或者数字，只要值相同，那么“浅层比较 ”也会认为二者相同，但是，如果prop的类型是复杂对象，那么
+    “浅层比较”的方式只看这两个prop是不是同一对象的引用，如果不是，哪怕这两个对象中的内容完全一样，也会被认为是两个不同的prop。
+    总之，要想让react-redux认为前后的对象类型prop是相同的，就必须要保证prop是指向同一个JavaScript对象。
+    <Foo style={{color: "red"}} />//每一次渲染都会认为style这个prop发生了变化，因为每次都会产生一个新的对象给style
+    const foo Style = {color: "red"}; //确保这个初始化只执行一次，不要放在render中<Foo style={fooStyle} />
+    看List传递给Item的onToggle和onRemove这个prop是是一个匿名的函数，每次渲染一个Item的时候，都会产生一个新的函数，这就是问题所在。
+
+2. 多个React组件的性能优化
+    React的调和（Reconciliation）过程，React在更新中这个“找不同”的过程，就叫做Reconciliation（调和）
+    1.节点类型不同的情况
+    如果树形结构根节点类型不相同，那就意味着改动太大了，也不要去费心考虑是不是原来那个树形的根节点被移动到其他地方去了，直接认为原来
+    那个节点以下的树形结构已经没用，需要重新构建那个节点以下的新的DOM树，原有的树形上的React组件会经历“卸载”的生命周期。
+    2. 节点类型相同的情况
+    如果两个树形结构的根节点类型相同，React就认为原来的根节点只需要更新过程，不会将其卸载，
+    shouldComponentUpdate
+    componentWillReceiveProps
+    componentWillUpdate
+    render
+    componentDidUpdate
+    3.多个子组件的情况
+    以在List中的Item序列后面增加一个新的Item实例为例，那么React会发现多出了一个Item，会创建一个新的Item组件实例，这个Item组件实例需要经历装载过程，
+    对于前两个Item实例，React会引发它们的更新过程，但是只要Item的shouldComponentUpdate函数实现恰当，检查props相同后就返回false的话，就可以避免实质的更新操作。
+    如果在List中的Item序列前面增加一个新的Item实例为例，React会首先认为把text为First的Item组件实例的text改成了Zero，text为Second的Item组件实例的text改成了First，
+    在最后面多出了一个Item组件实例，text内容为Second。
+    4. Key的用法
+    React根据key值，可以知道现在的第二和第三个Item实例其实就是之前的第一和第二个实例，所以React就会把新创建的Item实例插在第一位，对于原有的两个Item实例只用原有的
+    props来启动更新过程，这样shouldComponentUpdate就会发生作用，避免无谓的更新操作。
+    同类型子组件出现多个实例时如果没有key的话，React在运行时会给出警告。
+    注意：每个子组件的key值必须唯一
+    5. 用reselect提高数据获取性能
+    那么除了优化渲染过程，获取数据的过程也是一个需要考虑的优化点。
+    这就是reselect库的工作原理：只要组件相关状态没有改变，那就直接使用上一次的缓存结果，用于mapStateToProps。
+    reselect认为一个选择器的工作可以分为两个部分；
+    步骤1，从输入参数state抽取第一层结果，将这第一层结果和之前抽取的第一层结果做比较，如果发现完全相同，就没有必要进行第二部分运算了，
+    选择器直接把之前第二部分的运算结果返回就可以了。注意，这一部分做的“比较”，就是JavaScript的===操作符比较，如果第一层结果是对象的话，只有是同一对象才会被认为是相同。
+    步骤2，步骤1的输出结果作为步骤2的参数，显然，每次选择器函数被调用时，步骤一都会被执行，但步骤一的结果被用来判断是否可以使用缓存的结果，所以并不是每次都会调用步骤二的运算。
+    剩下的事情就是确定选择器步骤一和步骤二分别进行什么运算。原则很简单，步骤一运算因为每次选择器都要使用，所以一定要快，运算要非常简单，最好就是一个映射运算，
+    通常就只是从state参数中得到某个字段的引用就足够，把剩下来的重活累活都交给步骤二去做。
+    7. 范式化状态树(保持扁平化)
+    {
+      id: 1,                        // 待办事项id
+      text: "待办事项1",        //待办事项文字内容
+      completed: false,     //是否已完成
+      type Id: 1             //待办事项所属的种类id
+    }
+    {
+      id: 1,                        //种类id
+      name: "紧急",           //种类的名称
+      color: "red"                  //种类的显示颜色
+    }
+
+    {
+      id: 1, //待办事项 id
+      text: "待办事项1",        //待办事项文字内容
+      completed: false,     //是否已完成
+      type: { // 种类
+        name: " 紧急",         //种类的名称
+        color: "red"                //种类的显示颜色
+      }
+    }
+    join + reselect
+    update
+
+
+
+
+
+
+
+备注：
+1. 纯函数
+    React组件的render函数应该是一个纯函数，Redux中的reducer函数也应该是一个纯函数，mapStateToProps函数也应该是纯函数，
+    createSelector第一个参数的函数应该是一个纯函数，纯函数让问题清晰而且简化。
+2. 高阶函数
+    就是接受函数为参数来产生一个新函数的函数，createSelector
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

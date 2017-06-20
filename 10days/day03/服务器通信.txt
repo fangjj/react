@@ -1,0 +1,25 @@
+React组件访问服务器的方式；
+    componentDidMount
+    fetch
+    json
+    请求到数据之前
+    请求到数据之后
+    proxy
+
+Redux架构下访问服务器的方式；
+    Redux访问服务器，使用redux-thunk中间件异步问题
+    action -> 中间件 -> reducer
+
+    thunk
+    异步action -> redux-thunk -> reducer
+    异步action
+        返回是一个函数（非包含type的action）
+        场景：
+            与服务器交互
+            用了异步方法
+        类型：
+            开始异步操作
+            异步操作成功
+            异步操作失败
+    redux-thunk
+        检测action是一个函数则

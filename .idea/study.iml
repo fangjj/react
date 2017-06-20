@@ -3,6 +3,16 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day01/test_redux_context/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_react_redux/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_redux_context/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_todos/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_todos_ref/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_todos_ref_perf/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day02/test_todos_ref_perf_reselect/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day03/test_weather_react/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day03/test_weather_redux/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
