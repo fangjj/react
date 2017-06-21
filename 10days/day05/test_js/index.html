@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js</title>
+    <style>
+        #sample {
+            position: absolute;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="sample"></div>
+
+    <script>
+        var animatedElement = document.getElementById("sample");
+        var ANIMATION_INTERVAL = 16;//1秒钟60帧，1000/60 = 16
+        var left = 0;
+        var timer = setInterval(function() {
+            left += 10;
+            animatedElement.style.left = left + "px";
+            if ( left >= 400 ) {
+                clearInterval(timer);
+            }
+        }, ANIMATION_INTERVAL);
+    </script>
+</body>
+</html>

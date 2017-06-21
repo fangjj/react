@@ -1,0 +1,5 @@
+动画：
+    CSS3
+    JS(request Animation Frame)
+    ReactCSSTransitionGroup(CSS3)
+    React-Motion(JS)

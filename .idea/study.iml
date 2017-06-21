@@ -16,6 +16,8 @@
       <excludeFolder url="file://$MODULE_DIR$/10days/day03/test_weather_redux_cancel/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/10days/day04/test_react_router_base/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/10days/day04/test_react_router_part/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day05/test_react_motion/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/10days/day05/test_react_transition/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
